@@ -2,7 +2,7 @@
 
 ## 1. 고정 스택
 
-Next.js App Router/TypeScript strict, Tailwind + shadcn/ui, PostgreSQL/Prisma, Auth.js Google 인증, next-intl, Zod/React Hook Form, Vitest/Playwright, Vercel. 구체 버전은 Phase 0의 호환성 검증 후 lockfile에 고정한다. 저장소에는 아직 앱 코드가 없다.
+Next.js App Router/TypeScript strict, Tailwind + shadcn/ui, Supabase PostgreSQL/SQL migration/RPC/RLS, Supabase Auth Google 인증, next-intl, Zod/React Hook Form, Vitest/Playwright, Vercel. 구체 버전은 Phase 0의 호환성 검증 후 lockfile에 고정한다. 현재 구현 상태는 13-development-status.md를 따른다.
 
 UI → Application Services → Domain → Repositories → DB / Provider adapters 계층을 둔다. 외부 응답은 adapter가 정규화하고 UI에서 provider JSON을 직접 읽지 않는다.
 

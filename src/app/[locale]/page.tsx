@@ -1,4 +1,2 @@
-import {redirect} from "@/i18n/navigation";
-export default async function Home({params}:{params:Promise<{locale:string}>}){
- const {locale}=await params;redirect({href:"/dashboard",locale});
-}
+import {Landing} from '@/components/landing';
+export default function Home(){return <Landing/>;}

@@ -2,6 +2,8 @@
 
 ## 방향
 
+2026-10-03 추가: 라이트/다크/시스템에 더해 `sunshine` 테마를 제공한다. 상단과 설정의 노란빛 토글로 전환하고 선택을 유지한다. 크림 배경, 따뜻한 흰색 패널, 골드 포인트를 사용한다. `/ko`, `/en`은 솔루션 소개 랜딩이고 `/demo`는 저장되지 않는 예시 체험, 실제 작업은 Google 인증 후 `/dashboard`로 연결한다. 랜딩 모션은 일시정지와 reduced-motion을 지원하며 미구현 연동은 준비 중으로 표시한다.
+
 기준 이미지는 [Liquid Glass](../references/liquid-glass-reference.png)다. 차분한 반투명 표면과 선명한 업무 정보를 사용한다. 유리 효과보다 이름·단계·다음 행동·주의 사유가 먼저 읽혀야 한다.
 
 Dark는 deep navy 배경, blue-gray glass, off-white 글자, cyan/indigo 포인트다. Light는 밝은 배경, milky glass, near-black 글자, blue/indigo 포인트다. 서로 독립된 토큰을 사용한다. 사용자 배경 업로드/프리셋 편집은 P1이다.

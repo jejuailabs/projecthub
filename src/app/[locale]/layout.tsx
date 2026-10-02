@@ -5,6 +5,8 @@ import {routing} from "@/i18n/routing";
 import {Providers} from "@/components/providers";
 import "../globals.css";
 import "../photographic-glass.css";
+import "../drafts.css";
+import "../landing.css";
 export const metadata={title:"Project Hub",description:"Your projects, in perspective."};
 export default async function LocaleLayout({children,params}:{children:React.ReactNode;params:Promise<{locale:string}>}){
  const {locale}=await params;

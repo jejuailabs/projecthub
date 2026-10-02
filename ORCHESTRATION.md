@@ -1,6 +1,6 @@
 # Project Hub — 구현 기준
 
-버전: 1.0 / 2026-10-02 / 설계 확정, 구현 전.
+버전: 1.1 / 2026-10-03 / 구현 진행 중.
 
 ## 1. 제품 정의
 
@@ -45,7 +45,7 @@ P1: 팀 초대/공유, Notion People 계정 매핑, 즐겨찾기/태그, 사용�
 
 ## 5. 기술 결정
 
-Next.js App Router + TypeScript + Tailwind CSS + shadcn/ui(Radix 기반), PostgreSQL + Prisma, Auth.js(Google), next-intl, Zod, React Hook Form, Vitest + Playwright, Vercel을 사용한다. 클라이언트 전역 서버 상태 라이브러리는 초기에는 추가하지 않는다.
+Next.js App Router + TypeScript + Tailwind CSS + shadcn/ui(Radix 기반), Supabase PostgreSQL + SQL migration/RPC/RLS, Supabase Auth(Google), next-intl, Zod, React Hook Form, Vitest + Playwright, Vercel을 사용한다. 클라이언트 전역 서버 상태 라이브러리는 초기에는 추가하지 않는다.
 
 텍스트 추출은 서버의 OpenAI Responses API/Structured Outputs adapter로 구현한다. 모델 ID는 환경 설정으로 지정하고 평가를 통과한 지원 모델을 배포 기록에 고정한다. PostgreSQL outbox/작업 큐를 사용하며 외부 메시지 브로커는 추가하지 않는다. 의존성의 실제 버전과 provider 인증/API 호환성은 Phase 0에서 확인·고정한다.
 

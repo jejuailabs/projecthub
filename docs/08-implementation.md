@@ -1,10 +1,10 @@
 # 08. 구현 순서와 단계별 완료 조건
 
-설계는 확정했지만 모든 Phase의 실행 상태는 미착수다. 각 Phase는 계획→구현→typecheck→관련 테스트→리뷰→수정→증거 기록 순으로 진행한다. P0 범위를 중간에 P1로 옮겨 완료를 선언하지 않는다.
+설계는 확정했고 Phase 0~3과 Phase 6의 일부를 구현했다. 실제 진행 및 미완료 항목은 13-development-status.md를 따른다. 각 Phase는 계획→구현→typecheck→관련 테스트→리뷰→수정→증거 기록 순으로 진행한다. P0 범위를 중간에 P1로 옮겨 완료를 선언하지 않는다.
 
 ## Phase 0 — 실행 기반과 외부 전제 검증
 
-Next.js/TypeScript/Tailwind/shadcn/Prisma/Auth.js/next-intl/Vitest/Playwright, 환경 검증, lockfile, CI, mock provider를 구성한다. PostgreSQL과 Vercel preview를 연결하고 분 단위 cron/실행 시간/DB 연결 제한을 확인한다.
+Next.js/TypeScript/Tailwind/Radix/Supabase Auth/SQL migrations/next-intl/Vitest/Playwright, 환경 검증, lockfile, CI, mock provider를 구성한다. PostgreSQL과 Vercel preview를 연결하고 분 단위 cron/실행 시간/DB 연결 제한을 확인한다.
 
 Google·Notion·GitHub·Vercel 앱 등록, callback URL과 scope, 실제 계정 설치 가능 여부/API 버전을 검증한다. Notion data source 속성과 쓰기 capability를 확인한다. OpenAI 지원 모델을 10의 후보 fixture로 평가하고 모델 ID/스키마/프롬프트 버전을 고정한다. 실제 비밀이 없으면 mock 기반 개발은 가능하지만 live 검증은 차단 상태로 남긴다.
 

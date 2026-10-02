@@ -1,0 +1,13 @@
+.text-create-entry{display:flex;justify-content:flex-end;margin:0 0 20px}
+.text-project-dialog{width:min(860px,calc(100vw - 24px))}
+.draft-privacy{padding:16px;background:var(--hover);border-radius:12px;font-size:13px!important;line-height:1.8}
+.draft-input{margin-top:22px}.draft-input label,.draft-fields label,.draft-meta label{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.draft-input>small{display:block;text-align:right;color:var(--muted)}
+.draft-meta,.draft-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.draft-fields small{color:var(--muted);font-size:12px}.draft-review-title{margin-top:24px}
+.draft-candidate{margin:20px 0;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--input)}
+.draft-select{display:flex;align-items:center;gap:12px;font-size:14px}.draft-select input{width:20px;min-height:20px}.draft-select span{margin-left:auto;color:var(--muted);font-size:12px}
+.draft-warning{padding:10px;background:var(--accent-light);border-radius:8px;font-size:13px}
+.draft-candidate summary{cursor:pointer;min-height:44px;padding:10px 0}.draft-candidate blockquote{border-left:2px solid var(--accent);padding-left:14px;margin:12px 0;font-size:13px}
+.draft-footer{display:flex;justify-content:space-between;gap:12px;margin:20px 0}
+@media(max-width:640px){.draft-fields,.draft-meta{grid-template-columns:1fr}.draft-candidate{padding:14px}.draft-footer{flex-direction:column}.text-create-entry .button{width:100%;white-space:normal}}
