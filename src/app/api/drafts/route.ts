@@ -15,8 +15,10 @@ export async function POST(request:Request){
   if(quota.error)throw new HttpError(403,'forbidden');if(!quota.data)throw new HttpError(429,'extractionLimit');
   const workspace=await s.db.from('workspaces').select('timezone').eq('id',s.workspace).single();
   if(workspace.error)throw new HttpError(500,'serverError');
-  const result=await extract(input.data,workspace.data.timezone);
-  const id=crypto.randomUUID();const draft={id,...result,source_url:input.data.source_url};
+  let existingProject:undefined|{name:string;description:string};
+  if(input.data.project_id){const p=await s.db.from('projects').select('name,description').eq('id',input.data.project_id).eq('workspace_id',s.workspace).is('deleted_at',null).is('archived_at',null).single();if(p.error)throw new HttpError(404,'notFound');existingProject=p.data;}
+  const result=await extract(input.data,workspace.data.timezone,existingProject);
+  const id=crypto.randomUUID();const draft={id,...result,source_url:input.data.source_url,original_text:input.data.text};
   const {data,error}=await s.db.from('text_drafts').insert({id,workspace_id:s.workspace,ciphertext:seal(draft,`${s.workspace}:${s.user.id}:${id}`),candidate_ids:result.candidates.map(c=>c.candidate_id)}).select('expires_at').single();
   if(error)throw new HttpError(500,'saveFailed');
   return Response.json({...draft,expires_at:data.expires_at},{headers:{'Cache-Control':'no-store'}});

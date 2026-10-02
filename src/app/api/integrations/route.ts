@@ -1,0 +1,7 @@
+import {z} from 'zod';
+import {apiError,requestBody,HttpError} from '@/lib/http';
+import {requireSession,bindings,dbError} from '@/modules/integrations/server';
+import {providers} from '@/modules/integrations/domain';
+import {configured} from '@/modules/integrations/providers';
+export async function GET(){try{const s=await requireSession();const connections=[];for(let page=0;page<50;page++){const r=await s.db.from('integration_connections').select('*').eq('workspace_id',s.workspace).order('id').range(page*1000,page*1000+999);dbError(r.error);connections.push(...r.data!);if(r.data!.length<1000)break;if(page===49)throw new HttpError(413,'tooLarge');}return Response.json({connections,bindings:await bindings(s),configured:Object.fromEntries(providers.map(p=>[p,configured(p)])),githubInstallUrl:process.env.GITHUB_APP_SLUG?`https://github.com/apps/${encodeURIComponent(process.env.GITHUB_APP_SLUG)}/installations/new`:null},{headers:{'Cache-Control':'no-store'}});}catch(e){return apiError(e);}}
+export async function PATCH(request:Request){try{const v=z.object({id:z.uuid(),version:z.number().int().positive(),label:z.string().trim().min(1).max(160),disconnect:z.boolean()}).strict().parse(await requestBody(request));await requireSession().then(async s=>{const r=await s.db.rpc('edit_integration',{p_id:v.id,p_version:v.version,p_label:v.label,p_disconnect:v.disconnect});dbError(r.error);});return Response.json({ok:true});}catch(e){return apiError(e);}}

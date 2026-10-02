@@ -91,7 +91,12 @@
     "authority": "업무 정보 기준",
     "hubAuthority": "Hub에서 직접 관리",
     "activityHint": "최근 활동은 실제 진척률을 뜻하지 않습니다.",
-    "nextStep": "원본에서 이어서 작업하세요"
+    "nextStep": "원본에서 이어서 작업하세요",
+    "filterSelected": "선택됨",
+    "viewList": "목록 보기",
+    "activeGroup": "진행 중 · 운영 중",
+    "calendar": "전체 캘린더",
+    "todos": "전체 투두"
   },
   "Project": {
     "create": "프로젝트 만들기",
@@ -123,7 +128,8 @@
     "changesSaved": "저장했습니다",
     "validation": "입력값을 확인해 주세요. 대기 사유와 상태·단계의 조합도 확인해 주세요.",
     "closePair": "종료 단계는 완료 상태와 함께 선택해 주세요.",
-    "cancelActionHint": "완료 상태를 선택하면 현재 다음 행동과 기한을 비웁니다. 저장 전 확인해 주세요."
+    "cancelActionHint": "완료 상태를 선택하면 현재 다음 행동과 기한을 비웁니다. 저장 전 확인해 주세요.",
+    "startDate": "시작일"
   },
   "Status": {
     "IDEA": "아이디어",

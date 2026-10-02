@@ -91,7 +91,12 @@
     "authority": "Source of work information",
     "hubAuthority": "Managed directly in Hub",
     "activityHint": "Recent activity does not represent actual progress.",
-    "nextStep": "Continue in your original tool"
+    "nextStep": "Continue in your original tool",
+    "filterSelected": "Selected",
+    "viewList": "View projects",
+    "activeGroup": "In progress · Live",
+    "calendar": "Calendar",
+    "todos": "All to-dos"
   },
   "Project": {
     "create": "Create a project",
@@ -123,7 +128,8 @@
     "changesSaved": "Changes saved",
     "validation": "Check the entered values, including the waiting reason and matching completion status and stage.",
     "closePair": "The closed stage requires completed status.",
-    "cancelActionHint": "Completing a project clears its current next step and due date. Review before saving."
+    "cancelActionHint": "Completing a project clears its current next step and due date. Review before saving.",
+    "startDate": "Start date"
   },
   "Status": {
     "IDEA": "Idea",

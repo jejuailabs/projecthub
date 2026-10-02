@@ -1,5 +1,7 @@
 # 06. 외부 연동 계약
 
+> 현재 구현된 읽기 연동 범위와 실계정 검증·설정 상태는 [16. 복수 계정·선택 가져오기](16-integrations.md)를 따른다. 아래 예약 수신·Notion 쓰기 항목은 목표 계약이며 완료 선언이 아니다.
+
 ## 공통
 
 OAuth 기반의 workspace별 Integration을 사용한다. provider별 공개 앱 등록/승인/권한과 API 버전은 Phase 0에서 공식 문서와 실제 테스트 계정으로 검증해 integration setup 문서에 기록한다. Vercel도 배포 대상 계정/팀의 설치 범위를 구분한다. 인증 실패를 임의 공유 토큰이나 client 비밀 노출로 우회하지 않는다.

@@ -27,7 +27,7 @@ begin
  update public.projects set name='stale overwrite' where id=p.id and version=1;
  get diagnostics count_before=row_count;
  if count_before!=0 then raise exception 'FAIL: stale update';end if;
- if (select count(*) from public.activities where project_id=p.id)!=2 then raise exception 'FAIL: audit events';end if;
+ if (select count(*) from public.activities where project_id=p.id and kind in ('CREATED','UPDATED'))!=2 then raise exception 'FAIL: audit events';end if;
 end $$;
 select set_config('request.jwt.claim.sub',(select id::text from test_ids where label='owner_b'),true);
 select public.ensure_workspace();

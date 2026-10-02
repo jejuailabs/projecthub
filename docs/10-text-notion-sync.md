@@ -2,21 +2,21 @@
 
 ## 1. 범위
 
-P0는 붙여넣은 회의록/텍스트의 구조화 초안 추출, 사용자 검토 생성, 지정 업무 단계에서의 Notion 최초 연결과 선택 필드 동기화다. 기존 Notion 읽기 가져오기도 유지한다. 파일 업로드·음성 전사·회의 자동 수집·일반 요약·자동 병합·본문 전체 동기화는 제외한다.
+P0는 붙여넣은 회의록/텍스트의 구조화 초안 추출, 사용자 검토 생성, 지정 업무 단계에서의 Notion 최초 연결과 선택 필드 동기화다. 기존 Notion 읽기 가져오기도 유지한다. 2026-10-03 사용자 요청으로 파일 업로드, 프로젝트 자료 및 변경 이력을 포함한다. 구체적인 구현 범위와 중복 기능 판단은 [자료 관리 결정](14-materials-and-landing.md)을 따른다. 음성 전사·회의 자동 수집·자동 병합·본문 전체 동기화는 제외한다.
 
 ## 2. 입력과 초안 추출
 
-입력은 1~20,000 Unicode 문자, 선택적인 회의 날짜와 http/https 원문 URL이다. workspace 시간대와 기준 날짜를 명시한다. 1회 최대 10개 후보이며 더 많으면 분할 입력을 안내한다. 사용자가 추출을 요청할 때에만 서버로 전송한다.
+입력은 1~20,000 Unicode 문자, 선택적인 회의 날짜다. TXT/MD/PDF/DOCX에서 본문을 가져오거나 직접 붙여넣는다. URL은 프로젝트 원본 링크 기능에서 별도로 관리한다. workspace 시간대와 기준 날짜를 명시한다. 1회 최대 10개 후보이며 더 많으면 분할 입력을 안내한다. PDF/DOCX는 파일 선택 시 본문 변환을 위해 앱 서버로 전송한다. OpenAI에는 사용자가 후보 추출을 요청한 본문만 전송한다.
 
 서버는 OpenAI Responses API의 Structured Outputs로 후보 배열을 받는다. 필수 schema 키와 additionalProperties:false, nullable 값, enum/길이 제한을 정의하고 서버 Zod로 다시 검증한다. schema 준수는 내용의 정확성을 보장하지 않으므로 사용자 검토를 생략하지 않는다. refusal, 불완전 응답, timeout, 스키마 오류는 별도 실패로 처리한다. [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
 
-도구 사용은 끄고 store:false로 호출한다. 앱은 원문을 영구 저장하지 않지만 이 설정만으로 외부 제공자의 모든 보관이 없어지는 것은 아니므로 데이터 안내에 실제 계정 정책을 명시한다. [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data).
+도구 사용은 끄고 store:false로 호출한다. 앱의 초안/자료 보관과 별개로 이 설정만으로 외부 제공자의 모든 보관이 없어지는 것은 아니므로 데이터 안내에 실제 계정 정책을 명시한다. [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data).
 
 모델은 OPENAI_EXTRACTION_MODEL로 배포 시 고정한다. 한 요청 timeout 45초, output token 한도 8,000, 자동 모델 재호출 없이 사용자 재시도를 제공한다. 사용자당 분당 5회/workspace당 하루 20회 기본 한도이며 서버 DB에서 원자적으로 집계한다. 모델이 없거나 비용 한도 초과이면 직접 생성은 계속 제공한다.
 
 ## 3. 후보 스키마와 검토
 
-각 candidate는 서버가 부여한 candidate_id, name, description, lifecycle_status, workflow_stage, owner_label, next_action, next_action_due_on, target_date, coordination_state, coordination_note, links와 evidence를 갖는다. 추출 단계에서 이름 외 값은 null 가능하다. 근거 없는 이름도 후보가 아니라 '프로젝트를 찾지 못함'으로 처리한다.
+각 candidate는 서버가 부여한 candidate_id, name, description, lifecycle_status, workflow_stage, owner_label, next_action, next_action_due_on, target_date, coordination_state, coordination_note, links와 evidence를 갖는다. 추출 단계에서 이름 외 값은 null 가능하다. 이름이 없는 러프한 아이디어는 원문 내용에 근거해 제목을 제안하고 미확정으로 표시한다. 새로운 사업이나 과제를 임의로 만들어내지 않는다.
 
 - evidence는 필드별 원문 인용 최대 200자이며 서버가 입력 내 존재 여부를 검증한다. 검증 실패 필드는 미확정으로 표시한다.
 - 명시되지 않은 담당자/기한/상태를 만들어내지 않는다. 상태/단계 기본값을 제시할 때 '기본 제안'이라고 구별한다.
@@ -25,7 +25,7 @@ P0는 붙여넣은 회의록/텍스트의 구조화 초안 추출, 사용자 검
 - 기존 유사 프로젝트는 사용자 선택에 도움을 주는 후보 링크다. 텍스트 추출만으로 기존 프로젝트를 갱신하지 않는다.
 - 선택 후보는 프로젝트 도메인 제약을 통과한 뒤 일괄 원자적 생성한다. 동일 draft/candidate의 재확정은 같은 project ID를 반환한다.
 
-원문은 요청 처리 중 메모리에서만 사용한다. 초안 후보와 최소 evidence는 서버에서 암호화해 24시간까지 보관하며 확정/취소 시 삭제한다. 원문 URL은 사용자가 보존을 선택한 경우에만 Source로 만든다. 브라우저 원문은 탭 이탈 시 사라지며 복구를 약속하지 않는다.
+입력 원문, 후보와 evidence를 서버에서 암호화해 24시간까지 보관한다. 생성 확정 시 원문 텍스트를 프로젝트 자료로 함께 저장하고 초안 암호문을 지운다. 취소 시 초안을 삭제한다. 프로젝트 자료는 사용자의 의도적인 보관 대상으로 별도 유지되며 수정 이력도 남는다. 기존 URL Source 계약은 이전 API 호환용으로 유지하고 신규 화면에서는 파일/텍스트를 사용한다.
 
 ## 4. 연결 대상과 활성화
 

@@ -1,3 +1,4 @@
+import '../materials.css';
 import {NextIntlClientProvider,hasLocale} from "next-intl";
 import {setRequestLocale} from "next-intl/server";
 import {notFound} from "next/navigation";
@@ -7,6 +8,9 @@ import "../globals.css";
 import "../photographic-glass.css";
 import "../drafts.css";
 import "../landing.css";
+import "../stat-controls.css";
+import "../planning.css";
+import "../integrations.css";
 export const metadata={title:"Project Hub",description:"Your projects, in perspective."};
 export default async function LocaleLayout({children,params}:{children:React.ReactNode;params:Promise<{locale:string}>}){
  const {locale}=await params;

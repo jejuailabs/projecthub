@@ -6,6 +6,7 @@ export const safeUrl=z.url().max(2048).refine(v=>['https:','http:'].includes(new
 export const extractionInput=z.object({
  text:z.string().refine(v=>[...v].length>=1&&[...v].length<=20000&&!!v.trim()),
  meeting_date:z.iso.date().nullable(),source_url:safeUrl.nullable(),
+ project_id:z.uuid().optional(),
 }).strict();
 export const modelCandidate=z.object({
  name:z.string().min(1).max(120),description:z.string().max(2000).nullable(),
@@ -18,16 +19,18 @@ export const modelCandidate=z.object({
 }).strict();
 export const modelResult=z.object({candidates:z.array(modelCandidate).max(10),overflow:z.boolean()}).strict();
 export type Candidate={candidate_id:string;project:z.infer<typeof projectInput>;evidence:z.infer<typeof modelCandidate>['evidence'];unconfirmed:string[];links:z.infer<typeof modelCandidate>['links']};
-export type Draft={id:string;expires_at:string;candidates:Candidate[];source_url:string|null;overflow:boolean};
+export type Draft={id:string;expires_at:string;candidates:Candidate[];source_url:string|null;overflow:boolean;original_text?:string};
 export function reviewCandidates(result:z.infer<typeof modelResult>,text:string):Candidate[]{
  return result.candidates.flatMap(raw=>{
   const evidence=raw.evidence.filter(e=>text.includes(e.quote));
-  if(!evidence.some(e=>e.field==='name'&&e.quote.includes(raw.name)))return [];
+  if(!evidence.some(e=>e.field==='name'))return [];
   const project={...blankProject};const unconfirmed:string[]=[];
   for(const field of fields){
    if(raw[field]!==null&&evidence.some(e=>e.field===field))Object.assign(project,{[field]:raw[field]});
    else unconfirmed.push(field);
   }
+  // A concise title/summary can be derived from rough notes, but stays visibly proposed.
+  for(const field of ['name','description','next_action'] as const){if(raw[field]&&!text.includes(raw[field]))unconfirmed.push(field);}
   // Do not invent a complementary status, reason or deadline when the source is incomplete.
   if((project.lifecycle_status==='COMPLETED')!==(project.workflow_stage==='CLOSED')){project.lifecycle_status='IDEA';project.workflow_stage='DISCOVERY';unconfirmed.push('lifecycle_status','workflow_stage');}
   if(!project.next_action)project.next_action_due_on=null;

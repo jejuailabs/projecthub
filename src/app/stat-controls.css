@@ -1,0 +1,10 @@
+/* Persistent selection also works on touch screens without hover. */
+.stats .stat{border:2px solid var(--line);transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease;min-height:148px;text-align:left;position:relative;padding-bottom:44px}
+.stats .stat[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent-light) 75%,var(--surface-solid));box-shadow:inset 0 0 0 1px var(--accent),0 6px 18px #00000012}
+.stats .stat .stat-action{position:absolute;bottom:14px;right:18px;display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.4;color:var(--muted);font-weight:550}
+.stats .stat[aria-pressed=true] .stat-action{color:var(--accent);font-weight:700}
+.stats .stat:active{transform:scale(.97);box-shadow:inset 0 3px 8px #00000020;background:var(--accent-light)}
+.stats .stat:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+@media(hover:hover){.stats .stat:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 22px #00000018}.stats .stat:active{transform:scale(.97)}}
+@media(max-width:640px){.stats .stat{min-height:140px;padding-bottom:42px}.stats .stat .stat-action{bottom:13px;right:13px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.stats .stat{transition:none}.stats .stat:hover,.stats .stat:active{transform:none}}

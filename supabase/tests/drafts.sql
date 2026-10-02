@@ -17,10 +17,12 @@ begin
  exception when check_violation then null;end;
  if exists(select 1 from public.projects where workspace_id=w) then raise exception 'FAIL: batch partially committed';end if;
  payload:=jsonb_build_array(jsonb_build_object('candidate_id',c1,'project',jsonb_build_object('name','One')),jsonb_build_object('candidate_id',c2,'project',jsonb_build_object('name','Two')));
- select count(*) into n from public.confirm_text_draft(w,d,payload,'https://example.com/notes');
+ select count(*) into n from public.confirm_draft_with_material(w,d,payload,'https://example.com/notes','Original meeting notes');
+ if (select count(*) from public.project_materials where workspace_id=w and body='Original meeting notes')<>2 then raise exception 'FAIL: original capture';end if;
  if n<>2 then raise exception 'FAIL: batch count';end if;
- perform public.confirm_text_draft(w,d,payload,'https://example.com/notes');
+ perform public.confirm_draft_with_material(w,d,payload,'https://example.com/notes','Original meeting notes');
  if (select count(*) from public.projects where workspace_id=w)<>2 then raise exception 'FAIL: duplicate projects';end if;
+ if (select count(*) from public.project_materials where workspace_id=w)<>2 then raise exception 'FAIL: duplicate materials';end if;
  if (select ciphertext from public.text_drafts where id=d) is not null then raise exception 'FAIL: candidate content retained';end if;
  if (select count(*) from public.project_sources where workspace_id=w)<>2 then raise exception 'FAIL: source links';end if;
  for i in 1..5 loop if not public.reserve_extraction(w) then raise exception 'FAIL: premature limit';end if;end loop;

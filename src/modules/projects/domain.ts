@@ -7,16 +7,17 @@ export const projectInput=z.object({
  name:z.string().trim().min(1).max(120),description:z.string().max(2000),
  lifecycle_status:z.enum(statuses),workflow_stage:z.enum(stages),
  owner_label:z.string().trim().max(100),next_action:z.string().trim().max(300),
- next_action_due_on:date,target_date:date,coordination_state:z.enum(coordinations),coordination_note:z.string().trim().max(500)
+ next_action_due_on:date,start_date:date.optional(),target_date:date,coordination_state:z.enum(coordinations),coordination_note:z.string().trim().max(500)
 }).strict().superRefine((p,ctx)=>{
  if((p.lifecycle_status==='COMPLETED')!==(p.workflow_stage==='CLOSED'))ctx.addIssue({code:'custom',path:['workflow_stage'],message:'closedPair'});
  if(p.coordination_state!=='CLEAR'&&!p.coordination_note)ctx.addIssue({code:'custom',path:['coordination_note'],message:'reasonRequired'});
  if(!p.next_action&&p.next_action_due_on)ctx.addIssue({code:'custom',path:['next_action_due_on'],message:'actionRequired'});
+ if(p.start_date&&p.target_date&&p.start_date>p.target_date)ctx.addIssue({code:'custom',path:['start_date'],message:'dateOrder'});
 });
 export type ProjectInput=z.output<typeof projectInput>;
 export type Source={id:string;external_name:string;canonical_url:string;role:string};
 export type Project=ProjectInput & {id:string;workspace_id:string;version:number;confirmed_at:string;last_activity_at:string;created_at:string;archived_at:string|null;deleted_at:string|null;project_sources:Source[]};
-export const blankProject:ProjectInput={name:'',description:'',lifecycle_status:'IDEA',workflow_stage:'DISCOVERY',owner_label:'',next_action:'',next_action_due_on:null,target_date:null,coordination_state:'CLEAR',coordination_note:''};
+export const blankProject:ProjectInput={name:'',description:'',lifecycle_status:'IDEA',workflow_stage:'DISCOVERY',owner_label:'',next_action:'',next_action_due_on:null,start_date:null,target_date:null,coordination_state:'CLEAR',coordination_note:''};
 export type Flag='BLOCKED'|'OVERDUE'|'WAITING'|'DUE_SOON'|'NEEDS_INFO';
 export function dateInZone(now:Date,timezone:string){return new Intl.DateTimeFormat('en-CA',{timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit'}).format(now);}
 export function attention(p:ProjectInput & {archived_at?:string|null;deleted_at?:string|null},today:string):Flag[]{
