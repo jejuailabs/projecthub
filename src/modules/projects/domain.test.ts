@@ -1,0 +1,13 @@
+import {describe,it,expect} from 'vitest';
+import {attention,blankProject,dateInZone,freshness,projectInput,sourceInput} from './domain';
+describe('project boundaries',()=>{
+ it('requires closed status and stage together',()=>{expect(projectInput.safeParse({...blankProject,name:'A',workflow_stage:'CLOSED'}).success).toBe(false);expect(projectInput.safeParse({...blankProject,name:'A',workflow_stage:'CLOSED',lifecycle_status:'COMPLETED'}).success).toBe(true);});
+ it('requires a waiting reason and an action for its deadline',()=>{expect(projectInput.safeParse({...blankProject,name:'A',coordination_state:'WAITING'}).success).toBe(false);expect(projectInput.safeParse({...blankProject,name:'A',next_action_due_on:'2026-10-02'}).success).toBe(false);});
+ it('rejects invalid dates and injected properties',()=>{expect(projectInput.safeParse({...blankProject,name:'A',target_date:'2026-02-30'}).success).toBe(false);expect(projectInput.safeParse({...blankProject,name:'A',workspace_id:'other'}).success).toBe(false);});
+ it('uses timezone date at midnight',()=>expect(dateInZone(new Date('2026-10-01T15:01:00Z'),'Asia/Seoul')).toBe('2026-10-02'));
+ it('separates overdue from today and 3-day horizon',()=>{expect(attention({...blankProject,target_date:'2026-10-01'},'2026-10-02')).toEqual(['OVERDUE']);expect(attention({...blankProject,target_date:'2026-10-05'},'2026-10-02')).toEqual(['DUE_SOON']);expect(attention({...blankProject,target_date:'2026-10-06'},'2026-10-02')).toEqual([]);});
+ it('excludes paused and archived projects',()=>{expect(attention({...blankProject,lifecycle_status:'PAUSED',coordination_state:'BLOCKED'},'2026-10-02')).toEqual([]);expect(attention({...blankProject,archived_at:'x',target_date:'2020-01-01'},'2026-10-02')).toEqual([]);});
+ it('keeps several reasons in priority order',()=>expect(attention({...blankProject,lifecycle_status:'BUILDING',coordination_state:'BLOCKED',target_date:'2026-10-01'},'2026-10-02')).toEqual(['BLOCKED','OVERDUE','NEEDS_INFO']));
+ it('keeps manual freshness separate from activity',()=>{expect(freshness('2026-10-01T00:00:00Z',new Date('2026-10-08T00:00:00Z'))).toBe('FRESH');expect(freshness('2026-10-01T00:00:00Z',new Date('2026-10-08T00:00:01Z'))).toBe('STALE');expect(freshness(null,new Date())).toBe('UNKNOWN');});
+ it('rejects script source URLs',()=>expect(sourceInput.safeParse({project_id:crypto.randomUUID(),external_name:'Link',canonical_url:'javascript:alert(1)',role:'OTHER'}).success).toBe(false));
+});
